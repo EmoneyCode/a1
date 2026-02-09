@@ -24,9 +24,22 @@ class Dict
     Dict(String fileName)
     {
         System.out.print("Loading dictionary... ");
+        File file = new File(fileName);
+        try{
+            Scanner scanner = new Scanner(file);
+            ArrayList<String> listWords = new ArrayList<>();
 
-        /* You must complete this method by adding code.
-           Do not modify or delete the existing code */
+            while(scanner.hasNextLine()){
+                String word = scanner.nextLine();
+                listWords.add(word);
+                maxLength = Math.max(maxLength, word.length());
+            }
+            words = listWords.toArray(new String[0]);
+            numWords = words.length;
+        }
+        catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
 
         System.out.println("done");
     }// constructor
@@ -36,9 +49,11 @@ class Dict
     */
     boolean contains(String word)
     {
-        /* To be completed */
-
-        return true; // only here to satisfy the compiler
+        for(int i = 0; i < words.length; i++)
+            if(word.equals(words[i])){
+                return true;
+            }
+        return false;
     }// contains method
     
     /* This method returns the number of occurrences of dictionary words  
@@ -62,7 +77,7 @@ class Dict
     {   
         Dict d = new Dict(args[0]);
         System.out.println(d.numWords + " " + d.maxLength);
-        for(int index=0; index<10; index++) {
+        for(int index=0; index<d.words.length; index++) {
             System.out.print(d.words[index] + " ");
         }
         System.out.println(d.words[d.numWords-1]);
