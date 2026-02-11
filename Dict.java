@@ -66,8 +66,13 @@ class Dict
     int countWords(String text)
     {
         /* To be completed */
-
-        return 0; // only here to satisfy the compiler  
+        int count = 0;
+        for(int i = 0; i< text.length(); i++;){
+            for(){
+                
+            }
+        }
+        return count; // only here to satisfy the compiler  
     }// countWords method
 
     /* This method will only be used for testing purposes 
