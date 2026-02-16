@@ -1,69 +1,86 @@
+import java.util.HashSet;
+
 /*****************************************************
-   CS 326 - Spring 2026 - Assignment #1
-   Student #1's full name: ______
-   Student #2's full name: ______
-   Student #3's full name: ______
-*****************************************************/
+ * CS 326 - Spring 2026 - Assignment #1
+ * Student #1's full name: ______
+ * Student #2's full name: ______
+ * Student #3's full name: ______
+ *****************************************************/
 
-class Caesar
-{
+class Caesar {
 
-    /* This method takes in a Caesar-encrypted message and the key used 
-       to generate this ciphertext. It returns the original plaintext.
-       The third argument determines whether the plaintext should be
-       printed before returning from the method. If its value is true, 
-       your code should print the value of the key, followed by a single
-       white space, followed by the plaintext, followed by a single newline
-       character. If its value is false, the method should return with no
-       printed output.
+    /*
+     * This method takes in a Caesar-encrypted message and the key used
+     * to generate this ciphertext. It returns the original plaintext.
+     * The third argument determines whether the plaintext should be
+     * printed before returning from the method. If its value is true,
+     * your code should print the value of the key, followed by a single
+     * white space, followed by the plaintext, followed by a single newline
+     * character. If its value is false, the method should return with no
+     * printed output.
      */
-    static String decrypt(String ciphertext, int key, 
-                          boolean printPlaintext)
-    {
+    static String decrypt(String ciphertext, int key,
+            boolean printPlaintext) {
         String plaintext = "";
-        for(int i = 0; i<ciphertext.length(); i++){
+        for (int i = 0; i < ciphertext.length(); i++) {
             char character = ciphertext.charAt(i);
             int val = (int) character;
-            int newVal = val + key;
-            //A = 65 Z = 90
-            character = (char) (65 + Math.floorMod(newVal-65, 26));
+            // int newVal = val + key;
+            // A = 65 Z = 90
+            character = (char) (65 + Math.floorMod(val - 65 - key, 26));
             plaintext = plaintext + character;
         }
-        if(printPlaintext){
-            System.out.println(plaintext);
+        if (printPlaintext) {
+            System.out.println(key + " " + plaintext);
         }
 
-	    return plaintext; // only here to satisfy the compiler
+        return plaintext; // only here to satisfy the compiler
     }// decrypt method
 
-    /* This method will be used for testing purposes. You must complete it
-       without deleting or modifying the provided code. This method must:
-       1. load the dictionary and the ciphertext given as command-line arguments
-       2. decrypt the ciphertext with all reasonable keys and print the
-          plaintext that contains the largest number of dictionary words.
-       Note that, besides the messages pertaining to the I/O operations on 
-       the dictionary and ciphertext files, this method must print only a
-       single line of text, namely the recovered plaintext, followed by a
-       single newline character. In other words, the decrypt method must be
-       called with 'false' as its third argument. During grading, I will
-       change this value to 'true' to check the intermediate behavior of your
-       code.
+    /*
+     * This method will be used for testing purposes. You must complete it
+     * without deleting or modifying the provided code. This method must:
+     * 1. load the dictionary and the ciphertext given as command-line arguments
+     * 2. decrypt the ciphertext with all reasonable keys and print the
+     * plaintext that contains the largest number of dictionary words.
+     * Note that, besides the messages pertaining to the I/O operations on
+     * the dictionary and ciphertext files, this method must print only a
+     * single line of text, namely the recovered plaintext, followed by a
+     * single newline character. In other words, the decrypt method must be
+     * called with 'false' as its third argument. During grading, I will
+     * change this value to 'true' to check the intermediate behavior of your
+     * code.
      */
-    public static void main(String[] args)
-    {   
-        if (args.length != 2)
-        {
+    public static void main(String[] args) {
+        if (args.length != 2) {
             System.out.println("This program should be invoked with the " +
-                               "following arguments:");
+                    "following arguments:");
             System.out.println("  java Cesar <dictionary file name> " +
-                               "<ciphertext file name>");
+                    "<ciphertext file name>");
             System.exit(1);
         }
 
-        String ciphertext = Utils.loadFromFile("ciphertext",args[1]);
+         String ciphertext = Utils.loadFromFile("ciphertext", args[1]);
 
-        /* To be completed */
+        // Load dictionary
+        Dict dict = new Dict(args[0]);
+
+        int maxCount = -1;
+        String bestPlaintext = "";
+
+        // Try all possible keys (0-25)
+        for (int key = 0; key < 26; key++) {
+            String plaintext = decrypt(ciphertext, key, false);
+            int count = dict.countWords(plaintext);
+            if (count > maxCount) {
+                maxCount = count;
+                bestPlaintext = plaintext;
+            }
+        }
+
+        // Print ONLY the best plaintext
+        System.out.println(bestPlaintext);
 
     }// main method
-    
+
 }// Caesar class
