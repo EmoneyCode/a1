@@ -24,9 +24,28 @@ class Dict
     Dict(String fileName)
     {
         System.out.print("Loading dictionary... ");
+        ArrayList<String> wordArrayList = new ArrayList<>();
+        maxLength = 0;
+        File file = new File(fileName);
+        try{
+            for(int i = 97; i < 122; i++){
 
-        /* You must complete this method by adding code.
-           Do not modify or delete the existing code */
+                Scanner sc = new Scanner(file);
+                while(sc.hasNextLine()){
+                    String word = sc.nextLine().toLowerCase();
+                    if((char)i == word.charAt(0)){
+                        wordArrayList.add(word);
+                        numWords++;
+                        maxLength = Math.max(maxLength, word.length());
+                    }
+                }
+            }
+            words = wordArrayList.toArray(new String[0]);
+            
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        
 
         System.out.println("done");
     }// constructor
@@ -36,9 +55,13 @@ class Dict
     */
     boolean contains(String word)
     {
-        /* To be completed */
+        for(int i = 0; i < words.length; i++){
+            if(word.equals(words[i])){
+                return true;
+            }
+        }
 
-        return true; // only here to satisfy the compiler
+        return false;
     }// contains method
     
     /* This method returns the number of occurrences of dictionary words  
@@ -50,9 +73,22 @@ class Dict
      */
     int countWords(String text)
     {
-        /* To be completed */
+        int count = 0;
+        for(int i = 0; i < words.length; i++){
+            int startPoint = 0;
+            while(startPoint + words[i].length() < text.length()){
+                int index = text.substring(startPoint).indexOf(words[i]);
+                //if the word is found move the starting point to after where it was found in text and add to count
+                if(index != -1){
+                    count++;
+                    startPoint = index + words[i].length();
+                } else {
+                    break;
+                }
+            }
+        }
 
-        return 0; // only here to satisfy the compiler  
+        return count;
     }// countWords method
 
     /* This method will only be used for testing purposes 
@@ -62,7 +98,7 @@ class Dict
     {   
         Dict d = new Dict(args[0]);
         System.out.println(d.numWords + " " + d.maxLength);
-        for(int index=0; index<10; index++) {
+        for(int index=0; index<d.words.length; index++) {
             System.out.print(d.words[index] + " ");
         }
         System.out.println(d.words[d.numWords-1]);
