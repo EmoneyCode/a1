@@ -20,9 +20,20 @@ class Caesar
     static String decrypt(String ciphertext, int key, 
                           boolean printPlaintext)
     {
-        /* To be completed */
+        String plaintext = "";
+        for(int i = 0; i<ciphertext.length(); i++){
+            char character = ciphertext.charAt(i);
+            int val = (int) character;
+            int newVal = val + key;
+            //A = 65 Z = 90
+            character = (char) (65 + Math.floorMod(newVal-65, 26));
+            plaintext = plaintext + character;
+        }
+        if(printPlaintext){
+            System.out.println(plaintext);
+        }
 
-	return ""; // only here to satisfy the compiler
+	    return plaintext; // only here to satisfy the compiler
     }// decrypt method
 
     /* This method will be used for testing purposes. You must complete it
