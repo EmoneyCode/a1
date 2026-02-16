@@ -28,11 +28,11 @@ class Dict
         maxLength = 0;
         File file = new File(fileName);
         try{
-            for(int i = 97; i < 122; i++){
+            for(int i = 65; i < 91; i++){
 
                 Scanner sc = new Scanner(file);
                 while(sc.hasNextLine()){
-                    String word = sc.nextLine().toLowerCase();
+                    String word = sc.nextLine().toUpperCase();
                     if((char)i == word.charAt(0)){
                         wordArrayList.add(word);
                         numWords++;
@@ -76,12 +76,12 @@ class Dict
         int count = 0;
         for(int i = 0; i < words.length; i++){
             int startPoint = 0;
-            while(startPoint + words[i].length() < text.length()){
+            while(startPoint + words[i].length() <= text.length()){
                 int index = text.substring(startPoint).indexOf(words[i]);
                 //if the word is found move the starting point to after where it was found in text and add to count
                 if(index != -1){
                     count++;
-                    startPoint = index + words[i].length();
+                    startPoint = startPoint + index + 1;
                 } else {
                     break;
                 }
