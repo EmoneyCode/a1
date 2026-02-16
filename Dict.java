@@ -67,9 +67,9 @@ class Dict
     {
         /* To be completed */
         int count = 0;
-        for(int i = 0; i< text.length(); i++;){
-            for(){
-                
+        for(int i = 0; i< words.length; i++){
+            if(text.contains(words[i])){
+                count++;
             }
         }
         return count; // only here to satisfy the compiler  
@@ -80,11 +80,12 @@ class Dict
      */
     public static void main(String[] args)
     {   
-        Dict d = new Dict(args[0]);
+        Dict d = new Dict("testDict.txt");
         System.out.println(d.numWords + " " + d.maxLength);
         for(int index=0; index<d.words.length; index++) {
             System.out.print(d.words[index] + " ");
         }
+        System.out.println(d.countWords("bananas"));
         System.out.println(d.words[d.numWords-1]);
     }// main method
 
