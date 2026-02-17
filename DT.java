@@ -107,7 +107,6 @@ class DT {
         boolean[] used = new boolean[n];
 
         for (int rank = 1; rank <= n; rank++) {
-            // Find the leftmost column with the smallest key letter not yet ranked
             int best = -1;
             for (int col = 0; col < n; col++) {
                 if (!used[col]) {
@@ -161,13 +160,11 @@ class DT {
         Dict dict = new Dict(dictFile);
         String keyspace = Utils.loadFromFile("keyspace", keyspaceFile).toUpperCase();
 
-        // Build list of candidate keys from the keyspace file (one per line)
         String[] keys = keyspace.split("\\s+");
 
         String bestPlaintext = "";
         int bestCount = -1;
 
-        // Try every ordered pair (key1, key2) from the keyspace
         for (String key1 : keys)
             for (String key2 : keys) {
                 String candidate = reverseTranspose(

@@ -67,9 +67,15 @@ class Dict
     {
         /* To be completed */
         int count = 0;
-        for(int i = 0; i< words.length; i++){
-            if(text.contains(words[i])){
-                count++;
+        for (int i = 0; i < words.length; i++) {
+
+            String word = words[i];
+
+            for (int start = 0; start <= text.length() - word.length(); start++) {
+
+                if (text.substring(start, start + word.length()).equals(word)) {
+                    count++;
+                }
             }
         }
         return count; // only here to satisfy the compiler  
