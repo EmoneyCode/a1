@@ -6,6 +6,7 @@
 *****************************************************/
 
 import java.util.*;
+import java.io.*;
 
 class DT
 {
@@ -17,9 +18,18 @@ class DT
      */
     static String prepare(String plaintext)
     {
-	/* To be completed */
+        String preparedString = "";
 
-	return ""; // only here to satisfy the compiler
+        for(int i = 0; i < plaintext.length(); i++){
+            if(Character.isUpperCase(plaintext.charAt(i))){
+                preparedString += plaintext.charAt(i);
+            }
+            else if(i == plaintext.indexOf(".")){
+                preparedString += "XX";
+            }
+        }
+
+	return preparedString; // only here to satisfy the compiler
     }// prepare method
 
     /* This method implements a single transposition step in the encryption
@@ -28,9 +38,41 @@ class DT
     */
     static String transpose(String text, String key)
     {
-	/* To be completed */
+        int numRows = (int)Math.ceil((double)text.length()/key.length());
+        char[][] table = new char[numRows][key.length()];
+        String transposedText = "";
 
-	return ""; // only here to satisfy the compiler
+        //fills table
+        for(int i = 0; i < table.length; i++){
+            for(int j = 0; j < table[0].length; j++){
+                if(j + key.length() * i < text.length()){
+                    table[i][j] = text.charAt(j + key.length() * i);
+                }
+                
+            }
+        }
+
+        ArrayList<Integer> indexOrder = new ArrayList<Integer>();
+        int minIndex = -1;
+        
+        while(indexOrder.size() != key.length()){
+            char min = Character.MAX_VALUE;
+            for(int i = 0; i < key.length(); i++){
+                if(key.charAt(i) < min && !indexOrder.contains(i)){
+                    min = key.charAt(i);
+                    minIndex = i;
+                }
+            }
+            indexOrder.add(minIndex);
+        }
+
+        for(int i = 0; i < indexOrder.size(); i++){
+            for(int j = 0; j < numRows; j++){
+                transposedText += table [j][indexOrder.get(i)];
+            }
+        }
+
+	return transposedText;
     }// transpose method
 
     /* This method implements a single transposition step in the decryption
@@ -39,9 +81,39 @@ class DT
     */
     static String reverseTranspose(String text, String key)
     {
-	/* To be completed */
+	
+        int numRows = (int)Math.ceil((double)text.length()/key.length());
+        char[][] table = new char[numRows][key.length()];
+        
+        ArrayList<Integer> indexOrder = new ArrayList<Integer>();
+        int minIndex = -1;
+        
+        while(indexOrder.size() != key.length()){
+            char min = Character.MAX_VALUE;
+            for(int i = 0; i < key.length(); i++){
+                if(key.charAt(i) < min && !indexOrder.contains(i)){
+                    min = key.charAt(i);
+                    minIndex = i;
+                }
+            }
+            indexOrder.add(minIndex);
+        }
 
-	return ""; // only here to satisfy the compiler
+        for(int i = 0; i < indexOrder.size(); i++){
+            for(int j = 0; j < numRows; j++){
+                table[j][indexOrder.get(i)] = text.charAt(i * numRows + j);
+            }
+        }
+
+        String decodedText = "";
+
+        for(int i = 0; i < table.length; i++){
+            for(int j = 0; j < table[i].length; j++){
+                decodedText += table[i][j];
+            }
+        }
+
+	return decodedText; // only here to satisfy the compiler
     }// reverseTranspose method
 
     /* This method implements the complete encryption algorithm described
@@ -58,9 +130,42 @@ class DT
     static String encrypt(String plaintextFile, 
 			  String key1File, String key2File)
     {
-	/* To be completed */
+        File textFile = new File(plaintextFile);
+        File key1F = new File(key1File);
+        File key2F = new File(key2File);
+        String plaintext = "";
+        String key1 = "";
+        String key2 = "";
+        
+        try{
 
-	return ""; // only here to satisfy the compiler	
+            Scanner sc = new Scanner(textFile);
+
+            if(sc.hasNextLine()){
+                plaintext = sc.nextLine();
+            }
+
+            sc = new Scanner(key1F);
+
+            if(sc.hasNextLine()){
+                key1 = sc.nextLine();
+            }
+
+            sc = new Scanner(key2F);
+
+            if(sc.hasNextLine()){
+                key2 = sc.nextLine();
+            }
+
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    
+        String prepeardPlaintext = prepare(plaintext);
+        String transposedPlaintext = transpose(prepeardPlaintext, key1);
+        String doubleTransposedPlaintext = transpose(transposedPlaintext, key2);
+
+	return doubleTransposedPlaintext;
     }// encrypt method
 
     /* This method implements the complete decryption algorithm corresponding 
@@ -74,9 +179,46 @@ class DT
     static String decrypt(String ciphertextFile, 
 			  String dictFile, String keyspaceFile)
     {
-	/* To be completed */
+	    File textFile = new File(ciphertextFile);
+        Dict dict = new Dict(dictFile);
+        File keyspace = new File(keyspaceFile);
+        String ciphertext = "";
+        String bestPlaintext = "";
+        
+        try{
 
-	return ""; // only here to satisfy the compiler
+            Scanner sc = new Scanner(textFile);
+
+            if(sc.hasNextLine()){
+                ciphertext = sc.nextLine();
+            }
+
+            sc = new Scanner(keyspace);
+            Scanner sc2 = new Scanner(keyspace);
+
+            int maxCount = -1;
+
+            while(sc.hasNextLine()){
+                String key1 = sc.nextLine();
+                while(sc2.hasNextLine()){
+                    String key2 = sc2.nextLine();
+                    String plaintext = reverseTranspose(reverseTranspose(ciphertext, key1), key2);
+
+                    int count = dict.countWords(plaintext);
+
+                    if (count > maxCount) {
+                        maxCount = count;
+                        bestPlaintext = plaintext;
+                    }
+                }
+
+            }
+
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+
+	return bestPlaintext; // only here to satisfy the compiler
     }// decrypt method
 
     /* This method will be used for testing purposes. You may NOT modify it.
